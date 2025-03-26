@@ -1,14 +1,14 @@
-package observer;
+package com.aarya.bms.bms.merging.observer;
 
 import java.util.Set;
 
 public interface BookingNotificationRepo {
 
-    boolean isPresent(Long id);
+    boolean isPresent(String id);
 
-    void putObserver(Long id, Set<NotificationObserver> observers);
+    void putObserver(String id, Set<NotificationObserver> observers);
 
-    Set<NotificationObserver> getObservers(Long id);
+    Set<NotificationObserver> getObservers(String id);
 
-    void removeObserver(Long id, NotificationObserver observer);
+    void removeObserver(String id, NotificationObserver observer);
 }

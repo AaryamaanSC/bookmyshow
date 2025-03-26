@@ -13,6 +13,9 @@ import com.aarya.bms.bms.merging.exceptions.ShowNotFoundException;
 import com.aarya.bms.bms.merging.repository.ShowRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.config.MongoAuditingBeanDefinitionParser;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +29,13 @@ public class ShowService {
     private final SeatService seatService;
     private final ModelMapper modelMapper;
 
+    @Cacheable(value = "shows", key = "#id")
     public ShowDto getShowById(String id){
         Show show = findShowById(id);
         return modelMapper.map(show,ShowDto.class);
     }
 
-
+    @CachePut(value = "shows", key = "#result.id")
     public ShowDto createShow(ShowDto showDto) {
         Show show = modelMapper.map(showDto,Show.class);
         //generate seats
@@ -42,15 +46,17 @@ public class ShowService {
         return modelMapper.map(savedShow,ShowDto.class);
     }
 
+    @CacheEvict(value = "shows", key = "#showId")
     public void removeShow(String showId) {
         showRepository.deleteById(showId);
     }
 
+    @CacheEvict(value = "shows", allEntries = true)
     public void removeAllShows(List<String> showIdList) {
         showIdList.forEach(this::removeShow);
     }
 
-
+    @CachePut(value = "shows", key = "#id")
     public ShowDto updateShow(String id, ShowDto showDto) {
         Show show = modelMapper.map(showDto,Show.class);
         show.setId(id);
@@ -95,6 +101,7 @@ public class ShowService {
         return showSeatsId;
     }
 
+    @Cacheable(value = "availableSeats", key = "#showId")
     public List<String> availableSeatsInShow(String showId){
         if(!showRepository.existsById(showId)){
             throw new RuntimeException("Show does not exist cannot get the seats");

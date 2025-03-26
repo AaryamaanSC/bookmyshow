@@ -8,6 +8,8 @@ import com.aarya.bms.bms.merging.enums.SeatState;
 import com.aarya.bms.bms.merging.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class SeatService {
         return seatRepository.save(showSeat);
     }
 
+    @Cacheable(value = "availableSeats", key = "#seatIds")
     public List<String> getAvailableSeatsOfShow(List<String> seatIds){
         List<String> availableSeatIds = new ArrayList<>();
         for(String seatId:seatIds){
@@ -38,21 +41,26 @@ public class SeatService {
         return availableSeatIds;
     }
 
+    @CacheEvict(value = {"availableSeats", "seats"}, key = "#seatIds")
     public void reserveSeats(List<String> seatIds){
         List<ShowSeat> seats = seatRepository.findAllById(seatIds);
         seats.forEach(seat->seat.setState(SeatState.RESERVED));
         seatRepository.saveAll(seats);
     }
 
+    @Cacheable(value = "seats", key = "#seatIds")
     public List<ShowSeat> getAllSeat(List<String> seatIds){
         return seatRepository.findAllById(seatIds);
     }
 
+    @CacheEvict(value = {"availableSeats", "seats"}, key = "#seatIds")
     public void cancelSeats(List<String> seatIds){
         List<ShowSeat> seats = seatRepository.findAllById(seatIds);
         seats.forEach(seat->seat.setState(SeatState.AVAILABLE));
         seatRepository.saveAll(seats);
     }
+
+    @CacheEvict(value = {"availableSeats", "seats"}, key = "#seatIds")
     public void confimSeats(List<String> seatIds){
         List<ShowSeat> seats = seatRepository.findAllById(seatIds);
         seats.forEach(seat->seat.setState(SeatState.BOOKED));

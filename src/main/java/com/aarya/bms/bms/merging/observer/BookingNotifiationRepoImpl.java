@@ -1,11 +1,11 @@
-package observer;
+package com.aarya.bms.bms.merging.observer;
 
 import java.util.HashMap;
 import java.util.Set;
 
-public class BookingNotifiationRepoImpl implements BookingNotificationRepo{
+public class BookingNotifiationRepoImpl implements BookingNotificationRepo {
     public static BookingNotifiationRepoImpl bookingNotifiationRepo;
-    HashMap<Long, Set<NotificationObserver>> bookingNotificationHashMap;
+    HashMap<String, Set<NotificationObserver>> bookingNotificationHashMap;
 
     private BookingNotifiationRepoImpl(){
         bookingNotificationHashMap =new HashMap<>();
@@ -21,22 +21,22 @@ public class BookingNotifiationRepoImpl implements BookingNotificationRepo{
     }
 
     @Override
-    public boolean isPresent(Long id) {
+    public boolean isPresent(String id) {
         return bookingNotificationHashMap.containsKey(id);
     }
 
     @Override
-    public void putObserver(Long id, Set<NotificationObserver> observers) {
+    public void putObserver(String id, Set<NotificationObserver> observers) {
         bookingNotificationHashMap.put(id,observers);
     }
 
     @Override
-    public Set<NotificationObserver> getObservers(Long id) {
+    public Set<NotificationObserver> getObservers(String id) {
         return bookingNotificationHashMap.get(id);
     }
 
     @Override
-    public void removeObserver(Long id, NotificationObserver observer) {
+    public void removeObserver(String id, NotificationObserver observer) {
         bookingNotificationHashMap.remove(id,bookingNotificationHashMap.get(id).remove(observer));
     }
 }

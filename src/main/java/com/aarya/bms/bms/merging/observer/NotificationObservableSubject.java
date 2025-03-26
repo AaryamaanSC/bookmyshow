@@ -1,4 +1,4 @@
-package observer;
+package com.aarya.bms.bms.merging.observer;
 
 public interface NotificationObservableSubject {
         void addObserver(NotificationObserver observer);

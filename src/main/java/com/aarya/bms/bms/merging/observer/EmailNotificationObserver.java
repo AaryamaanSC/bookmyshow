@@ -1,10 +1,10 @@
-package observer;
+package com.aarya.bms.bms.merging.observer;
 
 public class EmailNotificationObserver implements NotificationObserver {
-    private Long id;
+    private String id;
     private String email;
 
-    public EmailNotificationObserver(Long id,String email) {
+    public EmailNotificationObserver(String id,String email) {
         this.id = id;
         this.email = email;
     }
@@ -15,7 +15,7 @@ public class EmailNotificationObserver implements NotificationObserver {
     }
 
     @Override
-    public Long getShowId() {
+    public String getShowId() {
         return this.id;
     }
 

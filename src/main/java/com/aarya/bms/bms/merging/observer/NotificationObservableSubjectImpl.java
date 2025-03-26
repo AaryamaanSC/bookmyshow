@@ -1,6 +1,5 @@
-package observer;
+package com.aarya.bms.bms.merging.observer;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,7 +9,7 @@ public class NotificationObservableSubjectImpl implements NotificationObservable
 
     @Override
     public void addObserver(NotificationObserver observer) {
-        Long id = observer.getShowId();
+        String id = observer.getShowId();
         if(!bookingNotificationRepo.isPresent(id)){
             Set<NotificationObserver> observers = new HashSet<>();
             observers.add(observer);
@@ -24,7 +23,7 @@ public class NotificationObservableSubjectImpl implements NotificationObservable
 
     @Override
     public void removeObserver(NotificationObserver observer) {
-        Long id = observer.getShowId();
+        String id = observer.getShowId();
         if(bookingNotificationRepo.isPresent(id)){
             Set<NotificationObserver> observers = bookingNotificationRepo.getObservers(id);
             if(observers.contains(observers)){

@@ -1,7 +1,7 @@
-package observer;
+package com.aarya.bms.bms.merging.observer;
 
 public interface NotificationObserver {
     void update(String message);
-    Long getShowId();
+    String getShowId();
 }
 

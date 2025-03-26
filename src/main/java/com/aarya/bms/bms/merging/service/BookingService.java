@@ -6,6 +6,9 @@ import com.aarya.bms.bms.merging.dto.UserDto;
 import com.aarya.bms.bms.merging.entity.Booking;
 import com.aarya.bms.bms.merging.entity.ShowSeat;
 import com.aarya.bms.bms.merging.enums.BookingStatus;
+import com.aarya.bms.bms.merging.observer.EmailNotificationObserver;
+import com.aarya.bms.bms.merging.observer.NotificationObservableSubject;
+import com.aarya.bms.bms.merging.observer.NotificationObserver;
 import com.aarya.bms.bms.merging.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,6 +26,7 @@ public class BookingService {
     private final ShowService showService;
     private final SeatService seatService;
     private final ModelMapper modelMapper;
+    private final NotificationObservableSubject notificationObservableSubject;
 
     public BookingDto bookTicketForShow(BookingDto bookingDto) {
 
@@ -75,8 +79,8 @@ public class BookingService {
         double totalPrice = calculateTotalSeatPrice(seatsToBeBooked);
 
 
-//        observer.NotificationObserver observer = new observer.EmailNotificationObserver(booking.getShowId(), userService.findUser(booking.getUserId()).getEmail());
-//        notificationObservableSubject.removeObserver(observer);
+        NotificationObserver observer = new EmailNotificationObserver(booking.getShowId(), userService.getUser(booking.getUserId()).getEmail());
+        notificationObservableSubject.removeObserver(observer);
 
         System.out.println("Return the money to user");
 

@@ -7,6 +7,9 @@ import com.aarya.bms.bms.merging.exceptions.TheaterNotFoundException;
 import com.aarya.bms.bms.merging.repository.TheaterRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +23,14 @@ public class TheaterService {
     private final ModelMapper modelMapper;
 
 
+    @CachePut(value = "theaters", key = "#result.body.id")
     public ResponseEntity<TheaterDto> CreateTheater(TheaterDto theaterDTO) {
         Theater theater = modelMapper.map(theaterDTO,Theater.class);
         theater = theaterRepository.save(theater);
         return ResponseEntity.ok(modelMapper.map(theater,TheaterDto.class));
     }
 
+    @CacheEvict(value = "theaters", key = "#theaterId")
     public void deleteTheater(String theaterId) {
         Theater theater = theaterRepository.findById(theaterId).orElseThrow(()-> new TheaterNotFoundException(theaterId));
 
@@ -33,6 +38,7 @@ public class TheaterService {
         theaterRepository.deleteById(theaterId);
     }
 
+    @Cacheable(value = "theaters", key = "#theaterId")
     public TheaterDto getTheater(String theaterId) {
         Theater theater = getTheaterById(theaterId);
         return modelMapper.map(theater,TheaterDto.class);
@@ -53,6 +59,7 @@ public class TheaterService {
         theaterRepository.save(theater);
     }
 
+    @Cacheable(value = "screens", key = "#theaterId")
     public List<ScreenDto> getAllScreens(String theaterId) {
         Theater theater = getTheaterById(theaterId);
         return screenService.getAllScreens(theater.getScreenIdList());
